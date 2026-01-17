@@ -2,7 +2,9 @@
 export enum LearningType {
   HIRAGANA = 'Hiragana',
   KATAKANA = 'Katakana',
-  KANJI = 'Kanji'
+  KANJI = 'Kanji',
+  CUSTOM = 'Custom',
+  REVIEW = 'Review'
 }
 
 export enum Difficulty {
@@ -24,6 +26,13 @@ export interface WordData {
   meaning: string;
 }
 
+export interface SRSRecord {
+  word: WordData;
+  nextReview: number; // Timestamp
+  level: number; // SRS level (0 to 8)
+  interval: number; // Current interval in milliseconds
+}
+
 export interface QuizState {
   score: number;
   totalPoints: number;
@@ -33,4 +42,29 @@ export interface QuizState {
   compliment: string;
   startTime: number;
   difficulty: Difficulty;
+  isEndless: boolean;
+  isReviewSession?: boolean;
+  streak: number;
+  multiplier: number;
+}
+
+export interface QuizResult {
+  id: string;
+  date: number;
+  type: LearningType;
+  difficulty: Difficulty;
+  score: number;
+  accuracy: number;
+  totalAnswered: number;
+  struggledWords: WordData[];
+  maxStreak: number;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  category: 'SRS' | 'Accuracy' | 'Streak';
+  condition: (history: QuizResult[], srsData: Record<string, SRSRecord>) => boolean;
 }
